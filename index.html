@@ -15,32 +15,39 @@
 
   <!-- Welcome Screen -->
   <div id="screen-welcome" class="screen">
-    <div class="welcome-container">
-      <div class="welcome-icon">🔍</div>
-      <h1 class="welcome-title">EmojiHunt</h1>
-      <p class="welcome-subtitle">Find the hidden emoji. One puzzle per day.</p>
-
-      <div class="rules-card">
-        <div class="rule">
-          <span class="rule-icon">🎯</span>
-          <span>Find the target emoji hidden in the grid</span>
+    <div class="terminal">
+      <div class="terminal-header">
+        <span class="terminal-dot red"></span>
+        <span class="terminal-dot yellow"></span>
+        <span class="terminal-dot green"></span>
+        <span class="terminal-title">emojihunt v1.0</span>
+      </div>
+      <div class="terminal-body" id="terminal-body">
+        <pre class="ascii-art">
+ _____ __  __  ___      _ ___ _  _ _   _ _  _ _____
+| ____|  \/  |/ _ \    | |_ _| || | | | | \| |_   _|
+|  _| | |\/| | | | |_  | || || || | |_| |  \| | | |
+| |___| |  | | |_| | |_| || ||__  _|  _  | |\  | | |
+|_____|_|  |_|\___/ \___/|___|  |_| |_| |_|_| \_| |_|</pre>
+        <div class="boot-lines">
+          <p class="boot-line">> SYSTEM BOOT.............. <span class="ok">OK</span></p>
+          <p class="boot-line">> LOADING EMOJI GRID [12x12] <span class="ok">OK</span></p>
+          <p class="boot-line">> DAILY PUZZLE SEED......... <span class="ok">SYNCED</span></p>
+          <p class="boot-line">> HINT MODULE [4 charges]... <span class="ok">READY</span></p>
+          <p class="boot-line dim">&nbsp;</p>
+          <p class="boot-line dim">MISSION BRIEFING:</p>
+          <p class="boot-line">  🎯 Find the target emoji hidden in the grid</p>
+          <p class="boot-line">  💡 Hints fade out wrong emoji (-1⭐ each)</p>
+          <p class="boot-line">  ⏱️  Wrong taps add +3s penalty</p>
+          <p class="boot-line">  ⭐ 0 hints = 5 stars. flex on your friends.</p>
+          <p class="boot-line dim">&nbsp;</p>
+          <p class="boot-line blink-line">> AWAITING INPUT...<span class="cursor">_</span></p>
         </div>
-        <div class="rule">
-          <span class="rule-icon">💡</span>
-          <span>Use hints to fade out wrong emoji (costs 1 star each)</span>
-        </div>
-        <div class="rule">
-          <span class="rule-icon">⭐</span>
-          <span>Fewer hints = more stars. Share your score!</span>
-        </div>
-        <div class="rule">
-          <span class="rule-icon">⏱️</span>
-          <span>Wrong taps add +3 seconds to your time</span>
+        <div class="terminal-buttons">
+          <button id="btn-play-daily" class="btn btn-terminal">> RUN daily_puzzle.exe</button>
+          <button id="btn-play-practice-welcome" class="btn btn-terminal-dim">> RUN practice_mode.exe</button>
         </div>
       </div>
-
-      <button id="btn-play-daily" class="btn btn-primary">Play Today's Puzzle</button>
-      <button id="btn-play-practice-welcome" class="btn btn-secondary">Practice Mode</button>
     </div>
   </div>
 

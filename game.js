@@ -822,6 +822,41 @@ function bindEvents() {
   });
 }
 
+// ---- Terminal Boot Animation ----
+
+function runBootAnimation() {
+  const lines = document.querySelectorAll('#screen-welcome .boot-line');
+  const buttons = document.querySelector('.terminal-buttons');
+
+  // Hide everything first
+  lines.forEach(line => {
+    line.style.opacity = '0';
+    line.style.transform = 'translateY(2px)';
+  });
+  if (buttons) {
+    buttons.style.opacity = '0';
+    buttons.style.transform = 'translateY(4px)';
+  }
+
+  // Reveal lines one by one
+  lines.forEach((line, i) => {
+    setTimeout(() => {
+      line.style.transition = 'opacity 0.15s, transform 0.15s';
+      line.style.opacity = '1';
+      line.style.transform = 'translateY(0)';
+    }, 150 + i * 80);
+  });
+
+  // Show buttons after all lines
+  if (buttons) {
+    setTimeout(() => {
+      buttons.style.transition = 'opacity 0.3s, transform 0.3s';
+      buttons.style.opacity = '1';
+      buttons.style.transform = 'translateY(0)';
+    }, 150 + lines.length * 80 + 200);
+  }
+}
+
 // ---- Main Init ----
 
 function init() {
@@ -838,8 +873,9 @@ function init() {
     // Returning player, hasn't played today: go straight to game
     initGame('daily');
   } else {
-    // First visit: show welcome
+    // First visit: show welcome with boot animation
     showScreen('screen-welcome');
+    runBootAnimation();
   }
 }
 

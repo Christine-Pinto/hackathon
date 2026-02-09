@@ -54,34 +54,170 @@ body {
   display: none;
 }
 
-/* ---- Welcome Screen ---- */
+/* ---- Terminal Welcome Screen ---- */
 
-.welcome-container {
+.terminal {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   flex: 1;
-  gap: 16px;
-  padding: 24px 0;
+  margin: 16px 0;
+  border: 1px solid #2a3a2a;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #0c100c;
+  box-shadow:
+    0 0 40px rgba(34, 197, 94, 0.04),
+    inset 0 0 80px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
-.welcome-icon {
-  font-size: 64px;
-  animation: float 3s ease-in-out infinite;
+/* Scanline overlay */
+.terminal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 2;
 }
 
-.welcome-title {
-  font-size: 36px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: #111611;
+  border-bottom: 1px solid #2a3a2a;
 }
 
-.welcome-subtitle {
-  color: var(--text-muted);
-  font-size: 16px;
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background: #ff5f57; }
+.terminal-dot.yellow { background: #febc2e; }
+.terminal-dot.green { background: #28c840; }
+
+.terminal-title {
+  margin-left: 8px;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 12px;
+  color: #5a6a5a;
+  letter-spacing: 0.05em;
+}
+
+.terminal-body {
+  flex: 1;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  font-family: 'Courier New', 'Consolas', monospace;
+  position: relative;
+  z-index: 1;
+}
+
+.ascii-art {
+  color: var(--accent);
+  font-size: clamp(6.5px, 2.1vw, 11px);
+  line-height: 1.2;
   text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.4);
+  white-space: pre;
 }
+
+.boot-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.boot-line {
+  font-size: 13px;
+  color: #7aff7a;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+}
+
+.boot-line .ok {
+  color: #28c840;
+  font-weight: 700;
+}
+
+.boot-line.dim {
+  color: #4a6a4a;
+}
+
+.blink-line .cursor {
+  animation: blink 1s step-end infinite;
+}
+
+.terminal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn-terminal {
+  background: transparent;
+  border: 1px solid #2a5a2a;
+  color: #7aff7a;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 16px;
+  text-align: left;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.btn-terminal:hover {
+  background: rgba(40, 200, 64, 0.08);
+  border-color: #28c840;
+  box-shadow: 0 0 12px rgba(40, 200, 64, 0.15);
+}
+
+.btn-terminal:active {
+  background: rgba(40, 200, 64, 0.15);
+}
+
+.btn-terminal-dim {
+  background: transparent;
+  border: 1px solid #1a2a1a;
+  color: #4a6a4a;
+  font-family: 'Courier New', 'Consolas', monospace;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 10px 16px;
+  text-align: left;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn-terminal-dim:hover {
+  color: #7aff7a;
+  border-color: #2a5a2a;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ---- Rules Card (used in help modal) ---- */
 
 .rules-card {
   background: var(--surface);
@@ -610,7 +746,15 @@ body {
     font-size: 12px;
   }
 
-  .welcome-title {
-    font-size: 28px;
+  .ascii-art {
+    font-size: 5.5px;
+  }
+
+  .boot-line {
+    font-size: 11px;
+  }
+
+  .terminal-body {
+    padding: 14px 12px;
   }
 }
