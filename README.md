@@ -28,3 +28,10 @@ emojihunt.io
 ## Tech
 
 Vanilla HTML/CSS/JS. No framework, no backend, no build step. Hosted on GitHub Pages.
+
+## License
+
+Copyright (c) 2026 Christine Pinto. All rights reserved.
+
+This code was created for the Claude Code Community Hackathon.
+No permission is granted to copy, modify, or distribute this code.
