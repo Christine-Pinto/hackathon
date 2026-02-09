@@ -4,7 +4,7 @@ A daily "Where's Waldo" browser game with emoji. Find the target emoji hidden in
 
 ## Core Concept
 
-- A grid of visually similar emoji fills the screen
+- A 12x12 grid of visually similar emoji fills the screen
 - One target emoji is hidden among them
 - Player taps/clicks to find it
 - Fewer hints + faster time = better score
@@ -15,7 +15,7 @@ A daily "Where's Waldo" browser game with emoji. Find the target emoji hidden in
 ### Daily Challenge
 - 1 puzzle per day, identical for all players (seeded by date)
 - Target emoji shown at the top: "Find the 🐙"
-- Grid filled with distractors from the same visual family (e.g., 🦑🦐🦀🦞🐡🐠🦈)
+- 12x12 grid (144 cells) filled with distractors from the same visual family
 - Player scans the grid and taps the target
 - Timer runs from grid reveal to correct tap
 - Score = stars based on hints used (0 hints = 5 stars, 4 hints = 1 star)
@@ -26,18 +26,34 @@ A daily "Where's Waldo" browser game with emoji. Find the target emoji hidden in
 - Each wrong tap adds +3 seconds to your displayed time
 - Prevents brute-force tapping (penalty stacks up fast)
 - Wrong tap count is tracked and shown in results
+- Wrong taps are recorded as ❌ in the shareable journey line
 
-### Hint System
-Each hint costs 1 star:
-1. **Hint 1:** Grey out the wrong half of the grid (left/right or top/bottom)
-2. **Hint 2:** Narrow to the correct quadrant
-3. **Hint 3:** Highlight the correct row band (3 rows)
-4. **Hint 4:** Highlight a small region around the target (3x3 area)
+### Hint System (Fade-Out)
+Each hint costs 1 star. Hints make chunks of wrong emoji fade to low opacity,
+progressively narrowing the visible field:
+
+1. **Hint 1:** ~50% of wrong cells fade out (~71 removed)
+2. **Hint 2:** ~50% of remaining wrong cells fade out (~36 removed)
+3. **Hint 3:** ~50% of remaining wrong cells fade out (~18 removed)
+4. **Hint 4:** Almost all wrong cells gone, only target + ~3-4 distractors remain
+
+Implementation: randomly select cells to fade (seeded, so same for everyone on daily).
+Faded cells get `opacity: 0.1` with a smooth 300ms CSS transition.
+The visual effect is satisfying -- grid gets sparser, target becomes more obvious.
+
+### Celebration Moment
+When the player taps the correct emoji:
+1. Timer stops immediately
+2. Found emoji scales up 2x with a green glow ring (400ms)
+3. Grid fades slightly behind (opacity 0.3)
+4. Brief pause (~1.2 seconds) for the dopamine hit
+5. Results modal slides up from bottom
 
 ### Practice Mode
-- Random target + grid each time
+- Random target + grid each time (uses Math.random, not seeded)
 - No limit on plays
 - Not shareable -- keeps daily challenge special
+- Result screen shows: stars + time + "Play Again" button (no journey, no streak, no copy)
 
 ## Scoring
 
@@ -56,7 +72,8 @@ Each hint costs 1 star:
 
 ## Results Modal (The Viral Engine)
 
-Full-screen modal that appears after finding the target. This is the most important screen -- it's what people screenshot and share.
+Full-screen modal that appears after the celebration moment.
+This is the most important screen -- it's what people screenshot and share.
 
 ### Layout (top to bottom)
 
@@ -70,14 +87,9 @@ Full-screen modal that appears after finding the target. This is the most import
 │     🐙 found in 3.2s       │  ← Target + time
 │       0 hints, 1 miss       │  ← Stats line
 │                             │
-│      ⬛⬛⬛⬛⬛             │
-│      ⬛⬛⬛⬛⬛             │  ← Mini hunt map
-│      ⬛⬛🎯⬛⬛             │     (the shareable visual)
-│      ⬛⬛⬛⬛⬛             │
-│      ⬛⬛⬛⬛⬛             │
+│     ❌❌💡🎯               │  ← Journey line
 │                             │
 │     [ 📋 Copy Results ]     │  ← Copies text version
-│     [ 📸 Share Image  ]     │  ← Downloads/shares image
 │                             │
 │     🔥 3 day streak         │  ← Streak counter
 │                             │
@@ -88,62 +100,50 @@ Full-screen modal that appears after finding the target. This is the most import
 └─────────────────────────────┘
 ```
 
-### The Mini Hunt Map (Shareable Visual)
+### The Journey Line (Shareable Visual)
 
-The actual grid (12x12) is compressed into a 5x5 mini map representing zones.
-Each zone shows what happened there:
+A sequence of emoji showing every action the player took, in order:
 
-- ⬛ = untouched zone (you didn't need help here)
-- 🟨 = zone revealed by hints
-- 🟥 = zone where you had wrong taps
-- 🎯 = zone where target was found
+- ❌ = wrong tap
+- 💡 = used a hint
+- 🎯 = found the target (always last)
 
-This creates a unique visual fingerprint for each player's experience.
+This tells the story of your hunt in a single line.
 
-**Zero hints (flex):**
+**Perfect find (instant flex):**
 ```
-⬛⬛⬛⬛⬛
-⬛⬛⬛⬛⬛
-⬛⬛🎯⬛⬛
-⬛⬛⬛⬛⬛
-⬛⬛⬛⬛⬛
+🎯
 ```
 
-**Struggled (relatable):**
+**Quick with one hint:**
 ```
-⬛🟥⬛⬛⬛
-⬛⬛⬛🟥⬛
-🟨🟨⬛⬛⬛
-🟨🎯⬛⬛⬛
-⬛⬛⬛⬛⬛
+💡🎯
 ```
+
+**Struggled (relatable, creates conversation):**
+```
+❌❌❌💡❌💡💡🎯
+```
+
+**Why this works for virality:**
+- The LENGTH of the line IS the story -- short = flex, long = struggle
+- Easy to compare in group chats ("yours is so long lol")
+- Creates conversation ("why did you need 3 hints on that one?!")
+- Trivial to generate in code (just push to an array)
+- Fits in a tweet, Discord message, WhatsApp -- anywhere
 
 ### Clipboard Text Format
 
 When "Copy Results" is tapped, this is what gets pasted:
 
 ```
-🔍 EmojiHunt #42
-
-⬛⬛⬛⬛⬛
-⬛⬛⬛⬛⬛
-⬛🟨🟨⬛⬛
-⬛🟨🎯⬛⬛
-⬛⬛⬛⬛⬛
-
+🔍 EmojiHunt #42 🐙
+❌❌💡🎯
 ⭐⭐⭐⭐☆ 4.2s
 emojihunt.io
 ```
 
-Works everywhere: Twitter, Discord, WhatsApp, Slack. The grid is the hook.
-
-### Share Image
-
-"Share Image" generates a styled canvas/image of the results modal.
-Uses the same dark theme as the app. Optimized for:
-- Instagram Stories (1080x1920 aspect ratio option)
-- Twitter/X posts (1200x675)
-- General share (square)
+Compact, readable, works everywhere. The journey line is the hook.
 
 ### Punny Titles (Auto-Rotated)
 
@@ -211,7 +211,7 @@ Difficulty guide:
 | 10 | Magic | 🔮 | 🪄✨🧿🎱💎🌀🎭🪬🧙 | Medium |
 | 11 | Music | 🎸 | 🎹🥁🎺🎻🪘🎷🪗🎤🎵 | Easy |
 | 12 | Sports | ⚽ | 🏀🏈⚾🎾🏐🏓🏒🥊🏋️ | Easy |
-| 13 | Hearts | 💜 | ❤️🧡💛💚💙🩷🤎🖤🩶 | Hard |
+| 13 | Faces | 🥸 | 😎🤓🧐🤠🥳🤩😏🫠🤭 | Medium |
 | 14 | Vehicles | 🏎️ | 🚗🚕🚙🚌🚎🏍️🚐🚓🚑 | Hard |
 | 15 | Weather | 🌩️ | ☀️🌤️⛅🌦️🌧️❄️🌪️🌫️🌈 | Medium |
 | 16 | Plants | 🌵 | 🌲🌳🌴🎋🌿☘️🍀🎍🪴 | Medium |
@@ -235,27 +235,42 @@ Adding more families is trivial: just append to the array, no code changes neede
 
 ### Difficulty Distribution
 - Easy: 7 days (warm start, weekends)
-- Medium: 16 days (the sweet spot)
-- Hard: 7 days (challenge days)
+- Medium: 17 days (the sweet spot)
+- Hard: 6 days (challenge days)
 
 ---
 
 ## Grid Configuration
 
-### Responsive Grid Sizing
-Mobile screens can't fit 15x15 comfortably (cells would be ~23px).
+### Fixed 12x12 Grid (All Devices)
+Everyone plays the same 12x12 grid (144 cells). This ensures scores are
+directly comparable across devices -- no asterisks needed.
 
-| Screen Width | Grid Size | Cell Size | Total Emoji |
-|-------------|-----------|-----------|-------------|
-| < 480px (phone) | 10x10 | ~35px | 100 |
-| 480-768px (tablet) | 12x12 | ~35px | 144 |
-| > 768px (desktop) | 15x15 | ~33px | 225 |
+- **Mobile (~375px wide):** cells are ~29px each (tight but tappable)
+- **Tablet (~768px wide):** cells are ~35px each (comfortable)
+- **Desktop (500px container):** cells are ~38px each (spacious)
 
-- Same daily target + same seed = same target position relative to grid
-- Grid scales but the puzzle is equivalent across devices
+Grid is contained in a max-width container and centers on screen.
+On mobile, the grid takes full width minus small padding.
+
 - Target placed at random position (seeded by date for daily)
 - Distractors fill remaining cells randomly from the family pool
 - Target appears exactly ONCE
+- Same seed = same grid layout for all players on the same day
+
+### Seeded Random Number Generator
+A simple deterministic RNG (e.g., mulberry32) seeded by day number ensures:
+- Same puzzle for all players on the same day
+- Family selection is shuffled via RNG (not simple modulo -- avoids predictable order)
+- Same target position, same distractor placement
+- Same cells fade in the same order when hints are used
+- Practice mode uses `Math.random()` (non-deterministic, different each play)
+
+### Puzzle Numbering
+- Define a LAUNCH_DATE constant (e.g., "2026-02-10")
+- Puzzle number = days since LAUNCH_DATE + 1
+- So launch day = EmojiHunt #1, next day = #2, etc.
+- Used in the shareable text: "🔍 EmojiHunt #42 🐙"
 
 ---
 
@@ -271,7 +286,7 @@ Accent primary:  #a855f7 (purple, buttons and highlights)
 Accent glow:     #c084fc (lighter purple, hover states)
 Success:         #22c55e (green, correct find)
 Error:           #ef4444 (red, wrong tap flash)
-Hint zone:       #eab308 (yellow/amber, hint overlays)
+Hint fade:       cells go to opacity 0.1 (ghost out, not removed)
 Text primary:    #f0f0f0 (off-white)
 Text secondary:  #888899 (muted)
 Stars:           #fbbf24 (gold)
@@ -282,21 +297,23 @@ Stars:           #fbbf24 (gold)
 - Emoji rendered at native system size (no custom emoji font)
 
 ### Grid Style
-- Dark card with subtle border
+- Dark card with subtle border and slight border-radius
 - Emoji cells with very subtle grid lines (1px #1e1e3a)
 - On hover/tap: cell briefly lights up
 - Wrong tap: red flash + shake animation
-- Correct tap: green pulse + emoji scales up
-- Hint zones: amber/yellow semi-transparent overlay on greyed-out areas
+- Correct tap: green pulse + emoji scales up 2x
+- Faded cells (from hints): opacity 0.1 with 300ms transition
 
 ### Animations (subtle, not distracting)
 - Grid entrance: emoji fade in with slight stagger (fast, ~300ms total)
 - Wrong tap: cell shakes horizontally (200ms)
-- Correct find: target emoji scales up + green ring pulse
-- Hint reveal: smooth fade of overlay zones
-- Results modal: slides up from bottom
+- Correct find: target emoji scales up 2x + green ring pulse (400ms)
+- Grid dims behind found emoji (opacity 0.3)
+- Hint fade: smooth opacity transition on affected cells (300ms)
+- Results modal: slides up from bottom after 1.2s celebration pause
 - Stars: pop in one by one (like Duolingo)
 - Confetti: on 5-star result only (using canvas-confetti library)
+- Respects `prefers-reduced-motion`: skip stagger, reduce transitions
 
 ### Sound Effects (optional, off by default)
 - Tap: soft click
@@ -342,8 +359,47 @@ Stored in LocalStorage. No account needed.
 - No backend, no database, no API calls
 - Hosted on **GitHub Pages** (free)
 - External dependencies: canvas-confetti (CDN, ~3kb)
-- Daily puzzle seeded: `Math.floor(Date.now() / 86400000) % families.length`
+- Seeded RNG (mulberry32 or similar) for deterministic daily puzzles
 - LocalStorage for: completion status, streak, stats, settings
+
+### File Structure
+```
+/
+├── index.html      ← Main page (structure + meta tags)
+├── style.css       ← All styles
+└── game.js         ← All logic + emoji family data + punny titles
+```
+
+Three files, no build step. Deploy by pushing to GitHub Pages.
+
+### LocalStorage Schema
+```json
+{
+  "emojihunt_today": {
+    "date": "2026-02-09",
+    "puzzleNumber": 42,
+    "stars": 4,
+    "time": 4.2,
+    "journey": ["❌", "❌", "💡", "🎯"],
+    "hintsUsed": 1,
+    "wrongTaps": 2,
+    "familyTarget": "🐙"
+  },
+  "emojihunt_stats": {
+    "played": 12,
+    "distribution": [0, 1, 2, 3, 6],
+    "currentStreak": 12,
+    "maxStreak": 12,
+    "bestTime": 1.8,
+    "totalTime": 64.8,
+    "lastPlayedDate": "2026-02-09"
+  },
+  "emojihunt_settings": {
+    "sound": false,
+    "hasSeenWelcome": true
+  }
+}
+```
 
 ---
 
@@ -357,8 +413,9 @@ Stored in LocalStorage. No account needed.
 - Only shown on first visit (then goes straight to game)
 
 ### 2. Game Screen
+- **Header:** Game title (small) + stats icon (📊) + help icon (❓)
 - **Top bar:** Target emoji display ("Find: 🐙"), timer, hint button with star cost
-- **Center:** Emoji grid (responsive, see grid config above)
+- **Center:** 12x12 emoji grid (centered, full width on mobile)
 - **Bottom:** Stars remaining indicator (⭐⭐⭐⭐⭐ dimming as hints used)
 - Minimal UI -- the grid is the focus
 
@@ -374,6 +431,7 @@ Stored in LocalStorage. No account needed.
 - If player returns after completing daily, show results modal with their score
 - "You already found today's emoji!" with their stats
 - Practice mode still available
+- Full result stored in LocalStorage (stars, time, journey, date)
 
 ### Streak Rules
 - Streak increments when you complete a daily puzzle
@@ -389,6 +447,18 @@ Stored in LocalStorage. No account needed.
 - Not a gameplay issue: target and grid render on same device
 - Could look slightly different in screenshots across platforms (acceptable)
 
+### Interaction Details
+- Faded cells (from hints) are non-interactive: tapping them is a no-op (no wrong tap penalty)
+- Grid uses `touch-action: manipulation` to prevent double-tap zoom on mobile
+- Hint button shows remaining cost: "💡 Hint (-1⭐)" and disables after all 4 used
+- After 4 hints used, hint button greys out
+
+### Accessibility
+- Respects `prefers-reduced-motion` for animations
+- Grid cells have sufficient tap target size (29px minimum)
+- Game is visual by nature; no meaningful screen reader adaptation
+- Replaced Hearts family (color-only distinction) with Faces family (shape distinction)
+
 ### Open Graph / Meta Tags
 - Title: "EmojiHunt - Daily Emoji Search"
 - Description: "Find the hidden emoji. One puzzle per day."
@@ -400,15 +470,31 @@ Stored in LocalStorage. No account needed.
 ## MVP Scope (Hackathon Build)
 
 What to build first (in priority order):
-1. Game grid + tap detection + target finding
-2. Daily seed + emoji families (at least 10)
-3. Timer + star scoring
-4. Hint system (4 levels)
-5. Results modal with copy-to-clipboard share
-6. LocalStorage (prevent replay, streak)
-7. Welcome screen / how to play
-8. Practice mode
-9. Stats page
-10. Share image generation
-11. Sound effects
-12. Confetti / polish animations
+
+### P0 -- Core Game (must have)
+1. Game grid (12x12) + tap detection + target finding
+2. All 30 emoji families in data
+3. Seeded RNG for deterministic daily puzzle
+4. Timer + star scoring
+5. Hint system (fade-out, 4 levels)
+6. Celebration moment (scale up + pause)
+7. Results modal with journey line + copy-to-clipboard
+8. LocalStorage (prevent replay, store results)
+
+### P1 -- Complete Experience
+9. Welcome screen / how to play (first visit only)
+10. Practice mode
+11. Streak tracking + display
+12. Countdown to next puzzle
+13. Stats page
+
+### P2 -- Polish
+14. Confetti on 5-star result
+15. Sound effects (off by default)
+16. Open Graph meta tags
+17. Smooth animations + prefers-reduced-motion
+
+### Cut from MVP (build later if time)
+- Share image generation (multi-format canvas export)
+- Leaderboard / social features
+- Custom themes
