@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>EmojiHunt - Daily Emoji Search</title>
+  <meta name="description" content="Find the hidden emoji. One puzzle per day.">
+  <meta property="og:title" content="EmojiHunt - Daily Emoji Search">
+  <meta property="og:description" content="Find the hidden emoji. One puzzle per day.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Welcome Screen -->
+  <div id="screen-welcome" class="screen">
+    <div class="welcome-container">
+      <div class="welcome-icon">🔍</div>
+      <h1 class="welcome-title">EmojiHunt</h1>
+      <p class="welcome-subtitle">Find the hidden emoji. One puzzle per day.</p>
+
+      <div class="rules-card">
+        <div class="rule">
+          <span class="rule-icon">🎯</span>
+          <span>Find the target emoji hidden in the grid</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">💡</span>
+          <span>Use hints to fade out wrong emoji (costs 1 star each)</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">⭐</span>
+          <span>Fewer hints = more stars. Share your score!</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">⏱️</span>
+          <span>Wrong taps add +3 seconds to your time</span>
+        </div>
+      </div>
+
+      <button id="btn-play-daily" class="btn btn-primary">Play Today's Puzzle</button>
+      <button id="btn-play-practice-welcome" class="btn btn-secondary">Practice Mode</button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="screen-game" class="screen hidden">
+    <header class="game-header">
+      <span class="game-title">🔍 EmojiHunt</span>
+      <div class="header-actions">
+        <button id="btn-help" class="icon-btn" title="How to play">❓</button>
+        <button id="btn-stats" class="icon-btn" title="Your stats">📊</button>
+      </div>
+    </header>
+
+    <div class="target-bar">
+      <div class="target-display">
+        <span class="target-label">Find:</span>
+        <span id="target-emoji" class="target-emoji"></span>
+      </div>
+      <div id="timer" class="timer">0.0s</div>
+      <button id="btn-hint" class="btn btn-hint">
+        💡 <span id="hint-text">Hint (-1⭐)</span>
+      </button>
+    </div>
+
+    <div class="grid-container">
+      <div id="grid" class="grid"></div>
+    </div>
+
+    <div class="stars-bar">
+      <div id="stars-display" class="stars-display"></div>
+    </div>
+  </div>
+
+  <!-- Results Modal -->
+  <div id="modal-results" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content results-content">
+      <h2 id="results-title" class="results-title"></h2>
+      <div id="results-stars" class="results-stars"></div>
+      <p id="results-info" class="results-info"></p>
+      <p id="results-stats-line" class="results-stats-line"></p>
+      <div id="results-journey" class="results-journey"></div>
+      <button id="btn-copy" class="btn btn-primary">📋 Copy Results</button>
+      <div id="copy-toast" class="copy-toast hidden">Copied!</div>
+      <div id="results-streak" class="results-streak"></div>
+      <div id="results-countdown" class="results-countdown"></div>
+      <button id="btn-practice-from-results" class="btn btn-secondary">Practice Mode</button>
+    </div>
+  </div>
+
+  <!-- Practice Results Modal -->
+  <div id="modal-practice-results" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content results-content">
+      <h2 class="results-title">Nice find!</h2>
+      <div id="practice-results-stars" class="results-stars"></div>
+      <p id="practice-results-info" class="results-info"></p>
+      <button id="btn-practice-again" class="btn btn-primary">Play Again</button>
+      <button id="btn-back-daily" class="btn btn-secondary">Back to Daily</button>
+    </div>
+  </div>
+
+  <!-- Stats Modal -->
+  <div id="modal-stats" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Your Stats</h2>
+        <button id="btn-close-stats" class="icon-btn close-btn">✕</button>
+      </div>
+      <div id="stats-summary" class="stats-summary"></div>
+      <h3 class="stats-section-title">Star Distribution</h3>
+      <div id="stats-distribution" class="stats-distribution"></div>
+      <div id="stats-times" class="stats-times"></div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="modal-help" class="modal hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>How to Play</h2>
+        <button id="btn-close-help" class="icon-btn close-btn">✕</button>
+      </div>
+      <div class="rules-card">
+        <div class="rule">
+          <span class="rule-icon">🎯</span>
+          <span>Find the target emoji hidden in the 12x12 grid</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">💡</span>
+          <span>Use hints to fade out wrong emoji (costs 1 star each)</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">⭐</span>
+          <span>Fewer hints = more stars (5 max). Share your score!</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">⏱️</span>
+          <span>Wrong taps add +3 seconds to your time</span>
+        </div>
+        <div class="rule">
+          <span class="rule-icon">🔥</span>
+          <span>Play every day to keep your streak alive</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
