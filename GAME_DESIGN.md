@@ -192,13 +192,18 @@ No manual work. Here's the pool:
 
 Themed distractor pools with a single target. Difficulty controlled by visual similarity.
 
+Difficulty guide:
+- **Easy:** Emoji are visually distinct, target stands out with a scan
+- **Medium:** Same category, need to look carefully
+- **Hard:** Very similar shapes/colors, requires focus
+
 | # | Theme | Target | Distractor Pool | Difficulty |
 |---|-------|--------|-----------------|------------|
 | 1 | Sea Creatures | 🐙 | 🦑🦐🦀🦞🐡🐠🦈🐟🦭 | Medium |
 | 2 | Bugs & Critters | 🐛 | 🐜🦗🕷️🦎🐊🐸🐍🦂🪲 | Medium |
 | 3 | Weapons (RPG) | 🗡️ | 🔪🪓🏹🔫🪃🛡️⚔️🪄💣 | Easy |
-| 4 | Space | 🛸 | 🚀🌍🌙⭐💫☄️🪐🌌🔭 | Easy |
-| 5 | Effects | ⚡ | 💫✨🌟💥🔥❄️🌈🌪️💨 | Hard |
+| 4 | Space | 🛸 | 🚀🌍🌙☄️🪐🌌🔭🛰️👽 | Easy |
+| 5 | Effects | ⚡ | 💫✨🌟💥🔥❄️🌪️💨🫧 | Medium |
 | 6 | Villains | 👾 | 🤖💀👹👻🎃🧟🦹😈🥷 | Medium |
 | 7 | Japanese Food | 🍙 | 🍣🍱🍜🍛🍡🍘🥟🍤🫕 | Hard |
 | 8 | Animals | 🦊 | 🐺🐶🐱🦁🐯🐻🐼🐨🦝 | Medium |
@@ -212,20 +217,26 @@ Themed distractor pools with a single target. Difficulty controlled by visual si
 | 16 | Plants | 🌵 | 🌲🌳🌴🎋🌿☘️🍀🎍🪴 | Medium |
 | 17 | Cat Faces | 😼 | 😺😸😹😻😽🙀😿😾🐱 | Hard |
 | 18 | Hands | 🤙 | 👋✋🖐️🖖👌🤌🤏✌️🤞 | Hard |
-| 19 | Clocks | 🕐 | 🕑🕒🕓🕔🕕🕖🕗🕘🕙 | Evil |
-| 20 | Moons | 🌔 | 🌑🌒🌓🌕🌖🌗🌘🌙🌚 | Evil |
-| 21 | Fruit | 🍑 | 🍎🍐🍊🍋🍇🍓🍒🥭🍌 | Easy |
-| 22 | Drinks | 🧋 | ☕🍵🥤🍶🍺🍷🥃🧃🍹 | Medium |
-| 23 | Books & Writing | 📕 | 📗📘📙📓📔📒📖📚✏️ | Hard |
-| 24 | Monkeys | 🙈 | 🙉🙊🐵🐒🦍🦧🐵🙉🙊 | Medium |
-| 25 | Sweets | 🍩 | 🍪🍰🧁🍫🍬🍭🎂🥧🍦 | Easy |
-| 26 | Balls | 🎱 | ⚽🏀🏈⚾🎾🏐🥎🏉🪀 | Medium |
-| 27 | Zodiac | ♏ | ♈♉♊♋♌♍♎♐♑♒ | Evil |
-| 28 | Symbols | ☯️ | ☮️✡️🔯✝️☦️🕉️☸️🕎⚛️ | Evil |
-| 29 | Trains | 🚄 | 🚂🚃🚅🚆🚇🚈🚉🚊🚝 | Hard |
-| 30 | Flags | 🇯🇵 | 🇰🇷🇨🇳🇹🇼🇹🇭🇻🇳🇮🇩🇲🇾🇸🇬🇵🇭 | Hard |
+| 19 | Fruit | 🍑 | 🍎🍐🍊🍋🍇🍓🍒🥭🍌 | Easy |
+| 20 | Drinks | 🧋 | ☕🍵🥤🍶🍺🍷🥃🧃🍹 | Medium |
+| 21 | Books | 📕 | 📗📘📙📓📔📒📖📚📑 | Hard |
+| 22 | Monkeys | 🙈 | 🙉🙊🐵🐒🦍🦧🐵🙉🙊 | Medium |
+| 23 | Sweets | 🍩 | 🍪🍰🧁🍫🍬🍭🎂🥧🍦 | Easy |
+| 24 | Balls | 🎱 | ⚽🏀🏈⚾🎾🏐🥎🏉🪀 | Medium |
+| 25 | Trains | 🚄 | 🚂🚃🚅🚆🚇🚈🚉🚊🚝 | Hard |
+| 26 | Dragons & Dinos | 🐲 | 🐉🦕🦖🐊🦎🐍🐸🦴🔥 | Medium |
+| 27 | Hats & Crowns | 👑 | 🎩🧢⛑️🪖🎓👒🤠💂🎪 | Medium |
+| 28 | Tools | 🔧 | 🔨⛏️🪛🪚🔩⚙️🗜️🪝🧲 | Medium |
+| 29 | Spooky | 👻 | 💀☠️🎃👹👺😈🧟🦇🕸️ | Medium |
+| 30 | Ocean | 🐋 | 🐳🐬🦈🐟🐠🐡🦐🦭🪸 | Medium |
 
 30 families = 30 days of unique daily content before cycling.
+Adding more families is trivial: just append to the array, no code changes needed.
+
+### Difficulty Distribution
+- Easy: 7 days (warm start, weekends)
+- Medium: 16 days (the sweet spot)
+- Hard: 7 days (challenge days)
 
 ---
 
